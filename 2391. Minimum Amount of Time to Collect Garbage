@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int garbageCollection(vector<string>& garbage, vector<int>& travel) {
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+        int m=0,g=0,p=0,a=0,b=0,c=0;
+        vector<int> v(garbage.size(),0);
+        v.push_back(0);
+        for(int i=travel.size();i>=0;i--){
+            for(int j=0;j<garbage[i].length();j++){
+                if(garbage[i][j]=='M'){
+                a++;
+                if(i>m)
+                m=i;}
+                else if(garbage[i][j]=='P'){
+                b++;
+                if(i>p)
+                p=i;}
+                else{
+                c++;
+                if(i>g)
+                g=i;}
+            }
+            if(i>0)
+            v[travel.size()-i+1]=v[travel.size()-i]+travel[travel.size()-i];
+        }
+        return a+v[m]+b+v[p]+c+v[g];
+    }
+};
