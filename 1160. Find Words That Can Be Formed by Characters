@@ -1,0 +1,50 @@
+class Solution {
+public:
+    int countCharacters(vector<string>& words, string chars) {
+        // make a vector of size 26 in which each index represents a character 
+        // from 'a' to 'z'
+        vector<char> m(26),temp(26);
+        
+        auto count = 0;
+        
+        // keep track of frequency of each character of chars in vector m 
+        for(auto i:chars)
+            m[i-'a']++;
+        
+        // saving frequency of each char of chars in temp 
+        // so that when i make changes in the "m"(frequency of each char),
+        // i will not loose my original "m"(frequency of each character of chars)
+        temp = m;
+        
+        
+        for(auto i:words)
+        {
+            bool flag = true;
+            m = temp; 
+            for(auto j:i)
+            {
+                if(m[j-'a']==0)
+                {
+                    // situation meets and you enter this if block
+                    // means there is some character required to make the string                        
+					//on which we are currently iterating over is not in the                           
+					//chars ... so we will break the inner loop and will move to                        
+					//the next word in the words array
+                    flag = false;
+                    break;
+                }
+                else
+                    m[j-'a']--;
+            }
+            if(flag)
+                count+=i.length();
+        }
+        return count;
+    }
+    Solution(){
+       
+        ios::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+    }
+};
