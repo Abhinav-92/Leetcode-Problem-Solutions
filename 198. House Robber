@@ -1,4 +1,7 @@
-int n = nums.size();
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
         int prev1 = nums[0];
         int prev = 0;
         int curri = 0;
@@ -13,3 +16,5 @@ int n = nums.size();
             prev1 = curri;
         }
         return prev1;
+    }
+};
