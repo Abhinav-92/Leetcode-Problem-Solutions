@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int maxSubarrayLength(vector<int>& nums, int k) {
+        int ans = 0;
+        map<int,int>m;
+        int j=0,i=0;
+        while(i < nums.size()){
+            m[nums[i]]++;
+            while(j<=i && m[nums[i]] > k){
+                m[nums[j++]]--;
+            }
+            
+            ans = max(ans,i-j+1);
+            i++;
+        }
+        return ans;
+    }
+};
