@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int countStudents(vector<int>& studs, vector<int>& sands) {
+        // support variables
+        int sandPos = 0, studPos = 0, initStudPos, res = studs.size(), len = studs.size();
+        while (res) {
+            // base case: the right sandwich for the right studen
+            if (studs[studPos] == sands[sandPos]) {
+                // updating res
+                res--;
+                // marking student as served
+                studs[studPos] = -1;
+                // advancing our pointers
+                studPos = (studPos + 1) % len;
+                sandPos++;
+            }
+            // otherwise, we need to move the queue until we either find a match or have done a full cycle
+            else {
+                // preparing the ground for the search of the next serviceable students
+                initStudPos = studPos;
+                studPos = (studPos + 1) % len;
+                // updating the queue as much as needed
+                while (studs[studPos] != sands[sandPos] && studPos != initStudPos) studPos = (studPos + 1) % len;
+                // exiting in case of a full circle without a match
+                if (studPos == initStudPos) break;
+            }
+        }
+        return res;
+    }
+};
