@@ -1,0 +1,29 @@
+class Solution {
+public:
+    vector<int> singleNumber(vector<int>& nums) {
+        
+        int Xor = 0;
+        for(int i=0;i<nums.size();i++) {
+            Xor ^= nums[i];
+        }
+        int mask = 1;
+        while(1) {
+            if((mask & Xor) == 0) {
+                mask = mask << 1;
+            }
+            else break;
+        }
+        
+        int x = 0, y = 0;
+        for(int i=0;i<nums.size();i++) {
+            if((nums[i] & mask) == 0) {  // & with mask to find the unique set bit
+                x ^= nums[i];
+            }
+            else {
+                y ^= nums[i];  
+            }
+        }
+        return { x, y };
+        
+    }
+};
