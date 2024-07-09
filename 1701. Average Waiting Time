@@ -1,0 +1,13 @@
+class Solution {
+public:
+    double averageWaitingTime(vector<vector<int>>& customers) {
+        double ans=0, sum=0;
+        const int n = customers.size();
+
+        for(auto& it: customers){
+            ans = ((it[0]>ans)?it[0]:ans)+it[1];
+            sum+=ans-it[0];
+        }
+        return sum/n;
+    }
+};
