@@ -1,0 +1,15 @@
+class Solution {
+public:
+    int minOperations(vector<string>& logs) {
+        int folderdep=0;
+        for(const auto& currentoperation : logs){
+            if(currentoperation == "../"){
+                folderdep = max(0,folderdep-1);
+            }
+            else if(currentoperation != "./"){
+                folderdep++;
+            }
+        }
+        return folderdep;
+    }
+};
