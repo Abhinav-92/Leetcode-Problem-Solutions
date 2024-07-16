@@ -1,0 +1,46 @@
+class Solution {
+
+private:
+    void depthFirstSearch(TreeNode* root,int &n,int &m,string &temp,string &s,string &d){
+        if(!root) return;
+
+        if(root->val == n) s=temp;
+        if(root->val == m) d=temp;
+        
+        temp.push_back('L');
+        depthFirstSearch(root->left, n, m, temp, s, d);
+        temp.pop_back();
+
+        temp.push_back('R');
+        depthFirstSearch(root->right, n, m, temp, s, d);
+        temp.pop_back();
+    }
+
+
+public:
+    string getDirections(TreeNode* root, int n, int m) {
+
+        string s,d,temp;
+        //depth first search for finding path from root to startValue and destValue both
+        depthFirstSearch(root,n,m,temp,s,d);
+
+        int ind = 0;
+
+        for(int i=0;i<s.size() && i<d.size();i++){
+            if(s[i]==d[i]) ind=i+1;
+            else break;
+        }
+
+        string start2dest;
+
+        for(int i = ind;i<s.size();i++){
+            start2dest.push_back('U');
+        }
+
+        for(int i = ind;i<d.size();i++){
+            start2dest.push_back(d[i]);
+        }
+
+        return start2dest;
+    }
+};
