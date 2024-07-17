@@ -1,0 +1,58 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+#pragma GCC optimize("03")
+class Solution {
+public:
+    void Solve(TreeNode* &root, unordered_map<int,int> &mp, vector<TreeNode*> &ans){
+        if(!root){
+            return;
+        }
+        Solve(root->left, mp, ans);
+        Solve(root->right, mp, ans);
+
+
+        // On return just check if the node value
+        // is to be deleted so just push it's left or right subtree
+        // and make that root to null so, it will remove from tree
+        if(mp.count(root->val)){
+            
+            if(root->left){
+                ans.push_back(root->left);
+            }
+            if(root->right){
+                ans.push_back(root->right);
+            }
+
+            root = nullptr;
+        }
+        return;
+    }
+    vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
+        ios_base::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+
+        unordered_map<int, int> mp;
+        vector<TreeNode*> ans;
+        for(auto &i : to_delete){
+            mp[i]++;
+        }
+
+        Solve(root, mp, ans);
+
+        // If root is not to be deleted then push it as well
+        if(root){
+            ans.push_back(root);
+        }
+        return ans;
+    }
+};
