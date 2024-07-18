@@ -1,0 +1,49 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+    int dis;
+    int res = 0;
+public:
+    int countPairs(TreeNode* root, int distance) {
+        dis = distance;
+        DFS(root);
+        return res;
+    }
+    vector<int> DFS(TreeNode* root){
+        if(root == nullptr) // does not have node
+            return {};
+        vector<int> left = DFS(root->left);
+        vector<int> right = DFS(root->right);
+        vector<int> &max = left.size() > right.size() ? left : right;
+        vector<int> &min = left.size() > right.size() ? right : left;
+        if(left.size() == 0 && right.size()==0){ // leaf
+            return {1}; // will not create leaf pair
+        } else { // at least one, always not leaf
+            int m = max.size();
+            int n = min.size();
+            int sum = 0;
+            for(int i = 1; i<dis; ++i){
+                if(i <= n) 
+                    sum += min[n-i];
+                // it has sum number with less than i dis
+                if(m - dis + i >= 0)
+                    res += sum * max[m - (dis-i)]; 
+            }
+            // after calculate the distance
+            for(int i=1; i<=n; ++i){
+                max[m-i] += min[n-i];
+            }
+            max.push_back(0);
+        }
+        return max;
+    }
+};
