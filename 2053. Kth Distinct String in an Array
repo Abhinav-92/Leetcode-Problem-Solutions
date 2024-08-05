@@ -1,0 +1,19 @@
+
+class Solution {
+public:
+    string kthDistinct(vector<string>& arr, int k) {
+        unordered_map<string, int> frequency;
+        vector<string> order;
+        for (const string& str : arr) {
+            if (frequency[str]++ == 0) {
+                order.push_back(str);
+            }
+        }
+        for (const string& str : order) {
+            if (frequency[str] == 1 && --k == 0) {
+                return str;
+            }
+        }
+        return "";
+    }
+};
