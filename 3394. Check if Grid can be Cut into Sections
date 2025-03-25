@@ -1,0 +1,79 @@
+vector<int> bucket[256]; 
+void radix_sort(int* nums, int N) {
+    auto [m, M]=minmax_element(nums, nums+N);
+    unsigned xrange=*M-*m+1;
+    int round = max(1, int(32-countl_zero(xrange)+7)/8), xmin=*m;
+    // 0th round
+    for (int i=0; i<N; i++) {
+        int x=nums[i];
+        x-=xmin; //Adjust x by xmin
+        bucket[x & 255].push_back(x);
+    }
+    int i = 0;
+    for (auto& B : bucket) {
+        for (auto v : B)
+            nums[i++] = v+(round==1?xmin:0);
+        B.clear();
+    }
+
+    // Rounds from 1st to (round-2)th round
+    for (int rd=1; rd < round-1; rd++) {
+        int shift=rd*8; // Bit shifting to extract the next set of 8 bits
+        for (int i=0; i<N; i++) {
+            const int x=nums[i];
+            bucket[(x >> shift) & 255].push_back(x);
+        }
+        i=0;
+        for (auto& B : bucket) {
+            for (auto& v : B)
+                nums[i++] = v;
+            B.clear(); // Clear bucket after usage
+        }
+    }
+    // Last round
+    if (round > 1) {
+        int shift =8* (round-1); // Bit shifting for the last round
+        for (int i=0; i<N; i++) {
+            const int x=nums[i];
+            bucket[x >> shift].push_back(x);
+        }
+        i=0;
+        for (auto& B : bucket) {
+            for (auto& v : B)
+                nums[i++] =v+xmin; // Adjust x back by adding xmin
+            B.clear();             // Clear bucket after usage
+        }
+    }
+}
+
+const int N=200000;
+int X[N], Y[N];// pair (x, isStart)-> (x<<1)+isSart
+class Solution {
+public:
+    static bool cut3(int* X, int M){
+        radix_sort(X, M);
+        int sum=0, touch0=0;
+        for(int i=0; i<M-1; i++){// last end not used
+            sum+=(X[i]&1)*2-1;
+            touch0+=sum==0;
+            if (touch0>=2) return 1;
+        }
+        return 0;
+    }
+    static bool checkValidCuts(int n, vector<vector<int>>& rectangles) {
+        const int m=rectangles.size(), M=m*2;
+        int i=0;
+        for(auto& r: rectangles){
+            const int xs=r[0], ys=r[1], xe=r[2], ye=r[3];
+            X[i]=(xs<<1)+1; Y[i++]=(ys<<1)+1;//Encode xs,ys with LSB mark 1
+            X[i]=(xe<<1)  ; Y[i++]=(ye<<1); // Encode xe,ye with LSB mark 0
+        }
+        return cut3(X, M) || cut3(Y, M);
+    }
+};
+auto init = []() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    return 'c';
+}();
