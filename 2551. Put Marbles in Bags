@@ -1,0 +1,19 @@
+class Solution {
+public:
+    static long long putMarbles(vector<int>& weights, int k) {
+        const int n=weights.size();
+        if (n<=2 || n==k) return 0;
+        vector<int> P(n-1, 0);
+        for (int i=0; i<n-1; i++)
+            P[i]=weights[i]+weights[i+1];
+        
+        k=min(k, n-k+1);//shorter length for accumulation suggested by @Sergei
+        // nth_element 
+        nth_element(P.begin(), P.begin()+(k-1), P.end());
+        const long long minP=accumulate(P.begin(), P.begin()+(k-1), 0LL);
+        nth_element(P.begin(), P.begin()+(n-k), P.end());
+        const long long maxP=accumulate(P.begin()+(n-k), P.end(), 0LL);
+        
+        return maxP-minP;
+    }
+};
