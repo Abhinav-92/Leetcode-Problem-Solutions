@@ -1,0 +1,94 @@
+struct TrieNode {
+    TrieNode* links[58]; 
+    int id[3];// id[0]: orignal, id[1]: lowercase, id[2]: vowel-wildcard
+};
+
+static constexpr int N=105000;  
+static TrieNode pool[N];
+static int ptr=0;   // node counters
+
+class Trie {
+    TrieNode* newNode() {
+        TrieNode* node=&pool[ptr++];
+        memset(node->links, 0, sizeof(node->links));
+        memset(node->id, -1, sizeof(node->id));
+        return node;
+    }
+public:
+    TrieNode* root;
+    Trie(){
+        ptr=0;
+        root=newNode();
+    }
+    void insert(const string& word, int idx, int widx) {
+        TrieNode* Node=root;
+        for(char c: word) {
+            int i=c-'A';
+            if(Node->links[i]==NULL)
+                Node->links[i]=newNode();
+            Node=Node->links[i];
+        }
+        if(Node->id[idx]==-1)            // only for first time
+            Node->id[idx]=widx;
+    }
+    int search(const string& word, int idx) {
+        TrieNode* Node=root;
+        for(char c: word) {
+            int i=c-'A';
+            if(Node->links[i]==NULL) return -1;
+            Node=Node->links[i];
+        }
+        return Node->id[idx];
+    }
+};
+
+class Solution {
+public:
+    static constexpr unsigned vowMask=
+    (1<<('A'&31))+(1<<('E'&31))+(1<<('I'&31))+(1<<('O'&31))+(1<<('U'&31));
+
+    static string tolow(string w) {
+        for(char& c : w) c=tolower(c);
+        return w;
+    }
+
+    static string toDeV(string w) {
+        for(char& c : w)
+            if((vowMask>>(c&31))&1) c= '_';
+        return w;
+    }
+
+    static vector<string> spellchecker(vector<string>& wordlist, vector<string>& queries) {
+        const int n=wordlist.size();
+        Trie W;
+
+        // build dictionaries
+        for(int i=0; i<n; i++) {
+            const string w=wordlist[i];
+            W.insert(w, 0, i);
+            string lw=tolow(w);
+            string dv=toDeV(lw);
+            W.insert(lw, 1, i);
+            W.insert(dv, 2, i);
+        }
+
+        for(string& q : queries) {
+            // exact match
+            if (W.search(q, 0)!=-1) continue;
+
+            // case insensitive
+            string low=tolow(q);
+            int i=W.search(low, 1);
+            if(i!=-1) {
+                q=wordlist[i];
+                continue;
+            }
+            // vowel-wildcard 
+            string dev=toDeV(low);
+            i=W.search(dev, 2);
+            if (i!=-1) q=wordlist[i];
+            else q="";
+        }
+        return queries;
+    }
+};
