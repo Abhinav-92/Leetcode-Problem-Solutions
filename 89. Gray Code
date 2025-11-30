@@ -1,0 +1,19 @@
+class Solution {
+public:
+    vector<int> grayCode(int n) {
+        vector<int> ret;
+        ret.push_back(0b0);
+        ret.push_back(0b1);
+        for(int i = 1; i < n; i++)
+        {
+            size_t sz = ret.size();
+            int mask = 0b1;
+            mask <<= i;
+            for(int j = 0; j < sz; j++)
+            {
+                ret.push_back(ret[sz-j-1] | mask);
+            }
+        }
+        return ret;
+    }
+};
