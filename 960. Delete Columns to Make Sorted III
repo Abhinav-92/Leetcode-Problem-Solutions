@@ -1,0 +1,39 @@
+vector<int8_t> adj[100];
+int dp[100];
+
+class Solution {
+public:
+    static int dfs(int col) {
+        if (dp[col]!=-1) return dp[col];
+        if (adj[col].empty()) return dp[col]=1;
+        int maxLen=1;
+        for (auto v : adj[col])
+            maxLen=max(maxLen, 1+dfs(v));
+
+        return dp[col]=maxLen;
+    }
+
+    static int minDeletionSize(vector<string>& strs) {
+        const int n=strs.size(), m=strs[0].size();
+
+        for(int i=0; i<m; i++) adj[i].clear();
+        memset(dp, -1, sizeof(int)*m);
+
+        // build adjacency list
+        for (int j=0; j <m-1; j++) {
+            for (int last=j+1; last<m; last++) {
+                if (all_of(strs.begin(), strs.end(),
+                           [&](const string& s) { return s[j]<=s[last];})) {
+                    adj[j].push_back(last);
+                }
+            }
+        }
+
+        int maxPath=0;
+        for (int j=0; j<m; j++)
+            if (m-j>maxPath)// exclude the paths which are too short
+                maxPath=max(maxPath, dfs(j));
+
+        return m-maxPath;
+    }
+};
