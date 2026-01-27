@@ -1,0 +1,65 @@
+struct Edge { int to, w, next; };
+struct Node {
+    unsigned d;
+    int u;
+    bool operator>(const Node& other) const {
+        return d>other.d;
+    }
+};
+
+const int N=50000, MAXE2=200000;
+
+int head[N];
+Edge E[MAXE2];
+int eIdx;
+
+unsigned dist[N];
+
+static inline void newEdge(int u, int v, int w) {
+    E[eIdx]={v, w, head[u]};
+    head[u]=eIdx++;
+}
+
+static inline void build_adj(int n, vector<vector<int>>& edges) {
+    eIdx=0;
+    memset(head, -1, sizeof(int)*n);
+
+    for (auto& e:edges) {
+        const int u=e[0], v=e[1], w=e[2];
+        newEdge(u, v, w);
+        newEdge(v, u, w<<1);
+    }
+}
+
+class Solution {
+public:
+    static int minCost(int n, vector<vector<int>>& edges) {
+        build_adj(n, edges);
+
+        memset(dist, 255, sizeof(unsigned)*n);
+
+        priority_queue<Node, vector<Node>, greater<Node>> pq;
+
+        dist[0]=0;
+        pq.emplace(0, 0);
+
+        while (!pq.empty()) {
+            auto [d, u]=pq.top();
+            pq.pop();
+
+            if (d>dist[u]) continue;
+            if (u==n-1) return d;
+            
+            for (int ei=head[u]; ei!=-1; ei=E[ei].next) {
+                int v=E[ei].to;
+                unsigned d2=d+E[ei].w;
+
+                if (d2<dist[v]) {
+                    dist[v]=d2;
+                    pq.emplace(d2, v);
+                }
+            }
+        }
+        return -1;
+    }
+};
