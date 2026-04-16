@@ -1,0 +1,31 @@
+constexpr int MM=1e6+1, N=1e5;
+unsigned pos[MM]={[0 ... MM-1]=-1U};
+unsigned Left[N], Right[N];
+class Solution {
+public:
+    static vector<int> solveQueries(vector<int>& nums, vector<int>& queries) 
+    {
+        const int n=nums.size(), n2=n*2;
+        int xMax=0;
+        for(int i=0; i<n2; i++){
+            const int x=nums[i%n];
+            unsigned& pX=pos[x];
+            xMax=max(x, xMax);
+            if (i>=n) Left[i-n]=pX-n;
+            if (pX<n) Right[pX]=i;
+            pX=i;
+        }
+        memset(pos, -1, (xMax+1)*sizeof(unsigned)); // reset for pos[0...xMax]
+        for(int& j: queries){
+            j=(j-Left[j]==n)?-1:min(j-Left[j], Right[j]-j);
+        }
+        return queries;
+    }
+};
+
+static const auto init = []() noexcept {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    return 'c';
+}();
